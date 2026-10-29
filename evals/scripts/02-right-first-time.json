@@ -1,0 +1,53 @@
+{
+  "id": "right-first-time",
+  "title": "Right first time",
+  "description": "A CS student answers all problems correctly on the first try.",
+  "configId": "cs-oxbridge",
+  "styleId": "rigorous",
+  "steps": [
+    {
+      "atMs": 120000,
+      "event": { "type": "turn_complete", "text": "For a sorted array, I can use three approaches. Brute force checks every pair in O(n squared). With binary search, I look for T minus a[i] for each element, giving O(n log n). The best approach is two pointers: start at each end, move the left pointer up if the sum is too small, move the right pointer down if it's too large. This finds all pairs in O(n) because each element is visited once, and no valid pair is missed since the array is sorted.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.95, "checkpointsHit": ["c1", "c2", "c3"], "misconceptionId": null, "evidence": "Complete correct answer with all three methods and justification." },
+      "expect": { "move": { "type": "probe", "probeIdx": 0 }, "interrupt": false, "assessCalled": true, "reason": "solved_probe", "state": { "probesAsked": 1 }, "interviewerKind": "utterance" },
+      "live": { "status": ["correct"] }
+    },
+    {
+      "atMs": 180000,
+      "event": { "type": "turn_complete", "text": "If the array isn't sorted, I can use a hash set to find pairs in O(n). For each element a[i], I check if T minus a[i] exists in the set. If not, I add a[i] to the set and continue.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Correct hash set approach for unsorted case." },
+      "expect": { "move": { "type": "advance", "toProblemIdx": 1 }, "interrupt": false, "assessCalled": true, "reason": "solved_advance", "state": { "problemIdx": 1 }, "interviewerKind": "utterance" }
+    },
+    {
+      "atMs": 300000,
+      "event": { "type": "turn_complete", "text": "Model the party as a graph where vertices are people and edges are handshakes. Each person's handshake count is their degree. The sum of all degrees equals twice the number of edges, so it's even. The even-degree vertices contribute an even sum, so the odd-degree vertices must also sum to an even number. A sum of k odd numbers is even only when k itself is even.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.95, "checkpointsHit": ["c1", "c2", "c3"], "misconceptionId": null, "evidence": "Complete proof using graph theory and parity." },
+      "expect": { "move": { "type": "probe", "probeIdx": 0 }, "interrupt": false, "assessCalled": true, "reason": "solved_probe", "state": { "probesAsked": 1 }, "interviewerKind": "utterance" },
+      "live": { "status": ["correct"] }
+    },
+    {
+      "atMs": 360000,
+      "event": { "type": "turn_complete", "text": "It's impossible for exactly one person to shake an odd number of hands. The handshake sum is always even, so if zero people have odd counts, the sum is even. If exactly one person had an odd count, the sum would be odd, contradiction. By the same parity argument, you can't have any odd number of odd-count people.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Correct parity argument for impossibility." },
+      "expect": { "move": { "type": "advance", "toProblemIdx": 2 }, "interrupt": false, "assessCalled": true, "reason": "solved_advance", "state": { "problemIdx": 2 }, "interviewerKind": "utterance" }
+    },
+    {
+      "atMs": 480000,
+      "event": { "type": "turn_complete", "text": "With nine coins and one heavier, I split into three groups of three. Weigh two groups against each other. If they balance, the heavy coin is in the unweighed group. If not, it's on the heavier side. Weigh two coins from that group of three. Same logic: if they balance, the third is heavy, otherwise the heavier side is. That's two weighings. Each weighing has three outcomes, so k weighings can distinguish up to three to the k cases. Since three to the k must be at least nine, we need ceiling of log base three of nine equals two weighings.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.95, "checkpointsHit": ["c1", "c2", "c3"], "misconceptionId": null, "evidence": "Complete solution with generalization." },
+      "expect": { "move": { "type": "probe", "probeIdx": 0 }, "interrupt": false, "assessCalled": true, "reason": "solved_probe", "state": { "probesAsked": 1 }, "interviewerKind": "utterance" },
+      "live": { "status": ["correct"] }
+    },
+    {
+      "atMs": 540000,
+      "event": { "type": "turn_complete", "text": "For the heavier-or-lighter variant with twelve coins, we have twenty-four possible cases - each coin could be heavier or lighter. With three weighings and three outcomes each, that's twenty-seven cases, so three weighings is sufficient. The strategy is more complex but follows similar three-way splitting logic.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Correct answer for variant." },
+      "expect": { "move": { "type": "wrap_up" }, "interrupt": false, "assessCalled": true, "reason": "solved_wrap_up", "state": { "phase": "wrap_up" }, "interviewerKind": "utterance" }
+    },
+    {
+      "atMs": 560000,
+      "event": { "type": "end" },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "phase": "done" } }
+    }
+  ]
+}

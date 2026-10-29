@@ -1,0 +1,43 @@
+
+// Review 1 additions (stage-08-review.md G4).
+describe("background steps (review 1 additions)", () => {
+  it("bg_request keeps lastRequest (same object)", () => {
+    const engine = engineState();
+    const lastRequest = { request: { state: engine, event: { type: "end" as const } }, studentText: null };
+    const view: InterviewView = { ...initialView, engine, status: "ready", lastRequest };
+    const result = interviewReducer(view, { type: "bg_request", request: { state: engine, event: { type: "silence", ms: 20000 } } });
+    expect(result.lastRequest).toBe(lastRequest);
+    expect(result).toEqual({ ...view, background: "pending" });
+  });
+
+  it("bg_move spoken clears old streamingText and slow", () => {
+    const view: InterviewView = { ...initialView, engine: engineState(), status: "ready", streamingText: "old", slow: true };
+    const result = interviewReducer(view, { type: "bg_move", move: { type: "hint", rung: 0 } });
+    expect(result).toEqual({
+      ...view,
+      status: "sending",
+      background: "speaking",
+      streamingText: "",
+      lastMove: { type: "hint", rung: 0 },
+      slow: false,
+    });
+  });
+
+  it("bg_failed while pending changes only background", () => {
+    const view: InterviewView = {
+      ...initialView,
+      engine: engineState(),
+      status: "sending",
+      streamingText: "kept",
+      background: "pending",
+    };
+    expect(interviewReducer(view, { type: "bg_failed" })).toEqual({ ...view, background: "none" });
+  });
+
+  it("mapBackgroundAction keeps the same request object", () => {
+    const request: StepRequest = { state: engineState(), event: { type: "partial", text: "x" } };
+    const mapped = mapBackgroundAction({ type: "request", request, studentText: null });
+    expect(mapped?.type).toBe("bg_request");
+    expect(mapped !== null && mapped.type === "bg_request" ? mapped.request : null).toBe(request);
+  });
+});

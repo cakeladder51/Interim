@@ -1,0 +1,40 @@
+{
+  "name": "interim",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "latency": "tsx --env-file=.env.local scripts/latency.ts",
+    "eval": "tsx --conditions=react-server --env-file-if-exists=.env.local scripts/eval.ts",
+    "relay": "tsx relay/src/main.ts"
+  },
+  "dependencies": {
+    "next": "16.4.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.0.0",
+    "openai": "^5.22.0",
+    "server-only": "^0.0.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/pngjs": "^6.0.5",
+    "@types/ws": "^8.5.12",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^3.2.4",
+    "tsx": "^4.20.6",
+    "pngjs": "^7.0.0"
+  }
+}

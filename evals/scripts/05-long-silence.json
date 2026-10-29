@@ -1,0 +1,39 @@
+{
+  "id": "long-silence",
+  "title": "Long silence",
+  "description": "Student stays silent, triggering hints through the hint ladder until hints exhausted and advance.",
+  "configId": "maths-oxbridge",
+  "styleId": "rigorous",
+  "steps": [
+    {
+      "atMs": 10000,
+      "event": { "type": "silence", "ms": 8000 },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "hintRung": -1 } }
+    },
+    {
+      "atMs": 40000,
+      "event": { "type": "silence", "ms": 20000 },
+      "expect": { "move": { "type": "hint", "rung": 0 }, "interrupt": false, "assessCalled": false, "reason": "silence_stuck", "state": { "hintRung": 0 }, "interviewerKind": "utterance" }
+    },
+    {
+      "atMs": 70000,
+      "event": { "type": "silence", "ms": 25000 },
+      "expect": { "move": { "type": "hint", "rung": 1 }, "interrupt": false, "assessCalled": false, "reason": "silence_stuck" }
+    },
+    {
+      "atMs": 100000,
+      "event": { "type": "silence", "ms": 25000 },
+      "expect": { "move": { "type": "hint", "rung": 2 }, "interrupt": false, "assessCalled": false, "reason": "silence_stuck" }
+    },
+    {
+      "atMs": 130000,
+      "event": { "type": "silence", "ms": 25000 },
+      "expect": { "move": { "type": "hint", "rung": 3 }, "interrupt": false, "assessCalled": false, "reason": "silence_stuck" }
+    },
+    {
+      "atMs": 160000,
+      "event": { "type": "silence", "ms": 25000 },
+      "expect": { "move": { "type": "advance", "toProblemIdx": 1 }, "interrupt": false, "assessCalled": false, "reason": "hints_exhausted_advance", "state": { "problemIdx": 1, "hintRung": -1 } }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": "ignores-hints",
+  "title": "Ignores hints",
+  "description": "Student consistently ignores hints, exhausting them and getting advanced, then runs out of time.",
+  "configId": "maths-oxbridge",
+  "styleId": "supportive",
+  "steps": [
+    {
+      "atMs": 30000,
+      "event": { "type": "turn_complete", "text": "I really have no idea where to start with this.", "source": "voice" },
+      "mock": { "status": "stuck", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student doesn't know how to start." },
+      "expect": { "move": { "type": "hint", "rung": 0 }, "interrupt": false, "assessCalled": true, "reason": "stuck", "state": { "hintRung": 0 }, "interviewerKind": "utterance" },
+      "live": { "status": ["stuck"] }
+    },
+    {
+      "atMs": 60000,
+      "event": { "type": "turn_complete", "text": "I'm not sure what that means. I don't see how that helps.", "source": "voice" },
+      "mock": { "status": "stuck", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student doesn't follow the hint." },
+      "expect": { "move": { "type": "hint", "rung": 1 }, "interrupt": false, "assessCalled": true, "reason": "stuck", "state": { "hintRung": 1 } },
+      "live": { "status": ["stuck"] }
+    },
+    {
+      "atMs": 90000,
+      "event": { "type": "turn_complete", "text": "Still stuck. I don't get what to do with lowest terms.", "source": "voice" },
+      "mock": { "status": "stuck", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student still stuck after hints." },
+      "expect": { "move": { "type": "hint", "rung": 2 }, "interrupt": false, "assessCalled": true, "reason": "stuck", "state": { "hintRung": 2 } },
+      "live": { "status": ["stuck"] }
+    },
+    {
+      "atMs": 120000,
+      "event": { "type": "turn_complete", "text": "I don't understand. Can you just tell me?", "source": "voice" },
+      "mock": { "status": "stuck", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student gives up on hints." },
+      "expect": { "move": { "type": "hint", "rung": 3 }, "interrupt": false, "assessCalled": true, "reason": "stuck", "state": { "hintRung": 3 } },
+      "live": { "status": ["stuck"] }
+    },
+    {
+      "atMs": 150000,
+      "event": { "type": "turn_complete", "text": "I still can't figure this out. I give up on this problem.", "source": "voice" },
+      "mock": { "status": "stuck", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student gives up completely." },
+      "expect": { "move": { "type": "advance", "toProblemIdx": 1 }, "interrupt": false, "assessCalled": true, "reason": "hints_exhausted_advance", "state": { "problemIdx": 1, "hintRung": -1 } },
+      "live": { "status": ["stuck"] }
+    },
+    {
+      "atMs": 1501000,
+      "event": { "type": "turn_complete", "text": "So for the odd numbers problem, I need to show one plus three plus five equals nine, which is three squared. And the pattern continues...", "source": "voice" },
+      "expect": { "move": { "type": "wrap_up" }, "interrupt": false, "assessCalled": false, "reason": "time_up", "state": { "phase": "wrap_up", "problemIdx": 1 } }
+    },
+    {
+      "atMs": 1520000,
+      "event": { "type": "turn_complete", "text": "Thank you for the interview. I enjoyed thinking about these problems.", "source": "voice" },
+      "expect": { "move": { "type": "acknowledge" }, "interrupt": false, "assessCalled": false, "reason": "closing", "state": { "phase": "wrap_up" }, "interviewerKind": "utterance" }
+    },
+    {
+      "atMs": 1530000,
+      "event": { "type": "end" },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "phase": "done" } }
+    }
+  ]
+}

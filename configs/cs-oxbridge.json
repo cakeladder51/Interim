@@ -1,0 +1,208 @@
+{
+  "id": "cs-oxbridge",
+  "title": "Oxbridge Computer Science Interview",
+  "subject": "Computer Science",
+  "styles": [
+    {
+      "id": "supportive",
+      "label": "Supportive tutor",
+      "persona": "A friendly Cambridge computer science supervisor who wants the student to succeed. Encourages thinking aloud, praises good ideas and gives hints gently.",
+      "tone": "Warm, patient and encouraging. Short sentences.",
+      "interjection": {
+        "minConfidence": 0.8,
+        "cooldownMs": 20000,
+        "minNewWords": 12
+      }
+    },
+    {
+      "id": "rigorous",
+      "label": "Rigorous examiner",
+      "persona": "A demanding Oxford computer science interviewer who expects precise reasoning about correctness and complexity, and presses on every unjustified claim.",
+      "tone": "Crisp, direct and neutral. Asks pointed questions.",
+      "interjection": {
+        "minConfidence": 0.65,
+        "cooldownMs": 12000,
+        "minNewWords": 8
+      }
+    }
+  ],
+  "problems": [
+    {
+      "id": "pair-sum-sorted",
+      "title": "Pair sum in a sorted array",
+      "statement": "You're given a sorted array of n integers and a target T. Decide whether two different elements of the array add up to T. Start with any correct method, then improve it.",
+      "checkpoints": [
+        {
+          "id": "c1",
+          "description": "Gives a correct brute-force method (check every pair) and states it is O(n²)."
+        },
+        {
+          "id": "c2",
+          "description": "Uses the sorted order to improve: for each element a, binary-search for T − a, giving O(n log n)."
+        },
+        {
+          "id": "c3",
+          "description": "Describes the two-pointer method (one pointer at each end; move the left pointer up if the sum is too small, the right pointer down if it is too large), explains why it never skips a valid pair, and states it is O(n)."
+        }
+      ],
+      "hintLadder": [
+        "What's the simplest method you can think of, even if it's slow? How long does it take?",
+        "The array is sorted. For a given element a, what number are you looking for, and how quickly can you find it in a sorted array?",
+        "Try one pointer at the start and one at the end. If their sum is too small, which pointer should move?",
+        "When the sum is too large, the right element can't pair with anything between the pointers to make T. Why? Use that to argue no pair is missed."
+      ],
+      "probes": [
+        "What changes if the array isn't sorted? Can you still beat O(n²)?",
+        "How would you count the number of pairs that sum to T, including duplicates?"
+      ],
+      "misconceptions": [
+        {
+          "id": "same-element-twice",
+          "signal": "Allows an element to pair with itself, for example reports a[i] + a[i] = T as a valid pair.",
+          "realign": "Quick check: the question asks for two different elements. Does your method ever pair an element with itself?"
+        },
+        {
+          "id": "wrong-pointer-move",
+          "signal": "In the two-pointer method, moves both pointers at once, moves the wrong pointer, or can't justify why no pair is skipped.",
+          "realign": "Let's slow down on the pointers. If the current sum is too small, which single move can increase it, and why is it safe to discard that element?"
+        }
+      ],
+      "solutionSketch": "Brute force checks all pairs, O(n²). Binary search for T − a[i] among the other elements gives O(n log n). Two pointers i = 0, j = n − 1: if a[i] + a[j] < T then i++, if it is greater than T then j--, otherwise found; stop when i ≥ j. When the sum is too small, a[i] is too small to pair with any remaining element, so discarding it is safe (symmetrically for too large). O(n) time, O(1) extra space."
+    },
+    {
+      "id": "odd-handshakes",
+      "title": "Odd handshakes",
+      "statement": "At a party, some pairs of people shake hands. Prove that the number of people who shook an odd number of hands is even.",
+      "checkpoints": [
+        {
+          "id": "c1",
+          "description": "Models the party as a graph: people are vertices, handshakes are edges, and each person's handshake count is their degree."
+        },
+        {
+          "id": "c2",
+          "description": "Shows the total of all handshake counts is twice the number of handshakes, because each handshake is counted once for each of its two people, so the total is even."
+        },
+        {
+          "id": "c3",
+          "description": "Concludes by parity: the people with even counts contribute an even amount, so the odd counts must sum to an even number, which requires an even number of odd-count people."
+        }
+      ],
+      "hintLadder": [
+        "Can you draw the party as a diagram? What would the people and the handshakes be?",
+        "Add up everyone's handshake count. How does that total relate to the number of handshakes?",
+        "So the total is even. Split the people into those with even counts and those with odd counts. What can you say about each group's sum?",
+        "A sum of odd numbers is even exactly when there is an even number of them. Can you finish the argument?"
+      ],
+      "probes": [
+        "Is it possible for exactly one person to have shaken an odd number of hands? Why not?",
+        "Can everyone at a party of 5 shake exactly 3 hands? Justify your answer."
+      ],
+      "misconceptions": [
+        {
+          "id": "assumes-everyone-shakes-everyone",
+          "signal": "Assumes every pair shakes hands (or some specific pattern) instead of an arbitrary set of handshakes.",
+          "realign": "Careful: the question says some pairs shake hands, not all of them. Your argument needs to work for any set of handshakes."
+        },
+        {
+          "id": "parity-slip",
+          "signal": "Argues that because the total is even, each person's count is even, or asserts the odd-count people number must be even without justification.",
+          "realign": "The total being even doesn't make each count even. What do you actually know about a sum that includes some odd numbers?"
+        }
+      ],
+      "solutionSketch": "Model as a graph. The sum of degrees counts each edge twice, so it equals 2E and is even. Even-degree vertices contribute an even total, so the degrees of the odd-degree vertices sum to an even number. A sum of k odd numbers has the same parity as k, so k is even."
+    },
+    {
+      "id": "heavy-coin",
+      "title": "Finding the heavy coin",
+      "statement": "You have 9 identical-looking coins; one is slightly heavier. Using a balance scale, what is the smallest number of weighings that always finds the heavy coin? Then generalise to n coins.",
+      "canvasHint": "Sketch your weighing plan on the canvas.",
+      "checkpoints": [
+        {
+          "id": "c1",
+          "description": "Finds a 2-weighing strategy: split the coins 3–3–3, weigh two groups, then weigh two coins from the group that must contain the heavy coin."
+        },
+        {
+          "id": "c2",
+          "description": "Explains why 1 weighing can't work: a weighing has only 3 outcomes (left heavier, right heavier, balance), which can't distinguish 9 possibilities."
+        },
+        {
+          "id": "c3",
+          "description": "Generalises to the smallest k with 3^k ≥ n, i.e. ⌈log₃ n⌉ weighings, using the same three-way split together with the counting argument."
+        }
+      ],
+      "hintLadder": [
+        "How many different results can a single weighing give you?",
+        "If each weighing can rule out two-thirds of the candidates, how should you split the 9 coins?",
+        "Weigh 3 against 3. Whatever happens, how many candidates are left, and how do you finish in one more weighing?",
+        "After k weighings you can tell apart at most 3^k cases. What does that say about the number of weighings needed for n coins?"
+      ],
+      "probes": [
+        "What if you don't know whether the odd coin is heavier or lighter? How many coins can you handle with 3 weighings?",
+        "Does your formula still work when n isn't a power of 3, say n = 10?"
+      ],
+      "misconceptions": [
+        {
+          "id": "halving",
+          "signal": "Splits the coins into two halves each time, getting about log₂ n weighings (for example 3 or 4 for 9 coins), missing that leaving a group off the scale gives information.",
+          "realign": "Halving works, but is it the best you can do? When you weigh, what does it tell you if the scale balances?"
+        },
+        {
+          "id": "ignores-balance-outcome",
+          "signal": "Treats a weighing as a two-way result, ignoring that a balance also gives information, so the lower-bound argument uses 2^k.",
+          "realign": "You've counted two possible results of a weighing. Is there a third? What does it mean when the scale balances?"
+        }
+      ],
+      "solutionSketch": "Weigh 3 against 3: the heavier side, or the unweighed 3 if the scale balances, contains the coin. Then weigh 1 against 1 among those 3. That is 2 weighings. One weighing has only 3 outcomes, fewer than 9 cases, so 2 is optimal. In general k weighings distinguish at most 3^k cases, so the minimum is ⌈log₃ n⌉, achieved by splitting into three near-equal groups each time."
+    }
+  ],
+  "rubric": {
+    "criteria": [
+      {
+        "id": "approach",
+        "name": "Problem-solving approach",
+        "levels": [
+          { "score": 1, "descriptor": "Doesn't find a way in, even with hints." },
+          { "score": 2, "descriptor": "Finds a way in only after substantial hints." },
+          { "score": 3, "descriptor": "Finds a sensible approach with occasional nudges." },
+          { "score": 4, "descriptor": "Independently finds a clear approach and adapts it when needed." }
+        ]
+      },
+      {
+        "id": "rigour",
+        "name": "Rigour and correctness",
+        "levels": [
+          { "score": 1, "descriptor": "Key steps are wrong or missing." },
+          { "score": 2, "descriptor": "Mostly correct but with unjustified or incorrect steps." },
+          { "score": 3, "descriptor": "Correct, with minor gaps in justification." },
+          { "score": 4, "descriptor": "Correct and fully justified at every step." }
+        ]
+      },
+      {
+        "id": "communication",
+        "name": "Thinking aloud",
+        "levels": [
+          { "score": 1, "descriptor": "Rarely explains thinking; hard to follow." },
+          { "score": 2, "descriptor": "Explains some steps but leaves big gaps." },
+          { "score": 3, "descriptor": "Explains most steps clearly." },
+          { "score": 4, "descriptor": "Explains reasoning clearly throughout, including doubts and dead ends." }
+        ]
+      },
+      {
+        "id": "responsiveness",
+        "name": "Responding to hints",
+        "levels": [
+          { "score": 1, "descriptor": "Ignores or can't use hints." },
+          { "score": 2, "descriptor": "Uses hints only when they're very explicit." },
+          { "score": 3, "descriptor": "Uses hints well after a short delay." },
+          { "score": 4, "descriptor": "Picks up subtle hints immediately and builds on them." }
+        ]
+      }
+    ]
+  },
+  "timing": {
+    "maxMinutes": 25,
+    "silenceStuckMs": 20000
+  },
+  "fallbackPrompt": "Talk me through what you're thinking right now. What would you try next?",
+  "asrKeywords": ["sorted array", "binary search", "two pointers", "big O", "log n", "graph", "vertex", "degree", "parity", "balance scale", "log base 3"]
+}

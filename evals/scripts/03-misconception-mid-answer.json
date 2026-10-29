@@ -1,0 +1,33 @@
+{
+  "id": "misconception-mid-answer",
+  "title": "Misconception mid-answer",
+  "description": "A student makes a misconception and is interrupted mid-answer.",
+  "configId": "maths-oxbridge",
+  "styleId": "supportive",
+  "steps": [
+    {
+      "atMs": 20000,
+      "event": { "type": "partial", "text": "So suppose root two equals p over q", "words": 8 },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "turnWordBaseline": 0, "lastInterjectAtMs": null } }
+    },
+    {
+      "atMs": 26000,
+      "event": { "type": "partial", "text": "So suppose root two equals p over q then squaring both sides gives two equals p squared over q squared", "words": 20 },
+      "mock": { "status": "off_track", "confidence": 0.9, "checkpointsHit": [], "misconceptionId": "lowest-terms-missing", "evidence": "Student starts the proof without assuming lowest terms." },
+      "expect": { "move": { "type": "realign", "misconceptionId": "lowest-terms-missing" }, "interrupt": true, "assessCalled": true, "reason": "interject_off_track", "state": { "lastInterjectAtMs": 26000, "turnWordBaseline": 20 }, "interviewerKind": "interjection" },
+      "live": { "status": ["off_track"], "misconceptionId": "lowest-terms-missing" }
+    },
+    {
+      "atMs": 30000,
+      "event": { "type": "partial", "text": "So suppose root two equals p over q then squaring both sides gives two equals p squared over q squared oh okay what am I missing", "words": 26 },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "turnWordBaseline": 20, "lastInterjectAtMs": 26000 } }
+    },
+    {
+      "atMs": 40000,
+      "event": { "type": "turn_complete", "text": "OK let me start again. I assume root two equals p over q where p and q are integers with no common factors. Then p squared equals two q squared, so p is even.", "source": "voice" },
+      "mock": { "status": "progressing", "confidence": 0.8, "checkpointsHit": ["c1"], "misconceptionId": null, "evidence": "Correctly restarts with lowest terms assumption." },
+      "expect": { "move": { "type": "acknowledge" }, "interrupt": false, "assessCalled": true, "reason": "progress", "state": { "turnWordBaseline": 0, "checkpointsHit": ["c1"], "lastInterjectAtMs": 26000 }, "interviewerKind": "utterance" },
+      "live": { "status": ["progressing", "partial", "correct"] }
+    }
+  ]
+}

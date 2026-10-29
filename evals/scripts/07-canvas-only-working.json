@@ -1,0 +1,33 @@
+{
+  "id": "canvas-only-working",
+  "title": "Canvas only working",
+  "description": "Student works primarily on canvas, with interjection based on wrong pointer move.",
+  "configId": "cs-oxbridge",
+  "styleId": "supportive",
+  "steps": [
+    {
+      "atMs": 20000,
+      "event": { "type": "canvas", "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" },
+      "mock": { "status": "off_track", "confidence": 0.85, "checkpointsHit": [], "misconceptionId": "wrong-pointer-move", "evidence": "Canvas shows incorrect pointer movement." },
+      "expect": { "move": { "type": "realign", "misconceptionId": "wrong-pointer-move" }, "interrupt": true, "assessCalled": true, "reason": "interject_off_track", "state": { "lastInterjectAtMs": 20000, "turnWordBaseline": 0 }, "interviewerKind": "interjection" }
+    },
+    {
+      "atMs": 30000,
+      "event": { "type": "canvas", "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "lastInterjectAtMs": 20000 } }
+    },
+    {
+      "atMs": 45000,
+      "event": { "type": "canvas", "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" },
+      "mock": { "status": "progressing", "confidence": 0.7, "checkpointsHit": ["c1"], "misconceptionId": null, "evidence": "Canvas shows correct pointer approach now." },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": true, "state": { "checkpointsHit": ["c1"] } }
+    },
+    {
+      "atMs": 60000,
+      "event": { "type": "turn_complete", "text": "I now move the left pointer when the sum is too small, because that value can't pair with anything else to make a bigger sum. The right pointer moves down when it's too large. This finds every pair because the array is sorted - we're never skipping valid pairs. And it's O(n) because each element is processed at most once.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.9, "checkpointsHit": ["c2", "c3"], "misconceptionId": null, "evidence": "Correct algorithm explanation with complexity." },
+      "expect": { "move": { "type": "probe", "probeIdx": 0 }, "interrupt": false, "assessCalled": true, "reason": "solved_probe", "state": { "checkpointsHit": ["c1", "c2", "c3"], "probesAsked": 1 }, "interviewerKind": "utterance" },
+      "live": { "status": ["correct", "progressing", "partial"] }
+    }
+  ]
+}

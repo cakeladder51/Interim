@@ -1,0 +1,43 @@
+{
+  "id": "stuck-then-recovers",
+  "title": "Stuck then recovers",
+  "description": "A maths student gets stuck, receives hints, and eventually solves the proof.",
+  "configId": "maths-oxbridge",
+  "styleId": "supportive",
+  "steps": [
+    {
+      "atMs": 30000,
+      "event": { "type": "turn_complete", "text": "I'm not sure where to start with this. How do I prove that root two is irrational?", "source": "voice" },
+      "mock": { "status": "stuck", "confidence": 0.85, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student says they don't know how to start." },
+      "expect": { "move": { "type": "hint", "rung": 0 }, "interrupt": false, "assessCalled": true, "reason": "stuck", "state": { "hintRung": 0, "checkpointsHit": [] }, "interviewerKind": "utterance" },
+      "live": { "status": ["stuck"] }
+    },
+    {
+      "atMs": 60000,
+      "event": { "type": "turn_complete", "text": "OK, so I'll assume that root two equals p over q, where p and q are integers with no common factors - they're in lowest terms.", "source": "voice" },
+      "mock": { "status": "progressing", "confidence": 0.8, "checkpointsHit": ["c1"], "misconceptionId": null, "evidence": "Correctly assumes p/q in lowest terms." },
+      "expect": { "move": { "type": "acknowledge" }, "interrupt": false, "assessCalled": true, "reason": "progress", "state": { "checkpointsHit": ["c1"] }, "interviewerKind": "utterance" },
+      "live": { "status": ["progressing", "partial", "correct"] }
+    },
+    {
+      "atMs": 90000,
+      "event": { "type": "turn_complete", "text": "If I square both sides, I get p squared equals two q squared. That means p squared is even, so p must be even because an odd number squared is odd.", "source": "voice" },
+      "mock": { "status": "progressing", "confidence": 0.85, "checkpointsHit": ["c2"], "misconceptionId": null, "evidence": "Correctly deduces p is even from p² = 2q²." },
+      "expect": { "move": { "type": "acknowledge" }, "interrupt": false, "assessCalled": true, "reason": "progress", "state": { "checkpointsHit": ["c1", "c2"] }, "interviewerKind": "utterance" },
+      "live": { "status": ["progressing", "partial", "correct"] }
+    },
+    {
+      "atMs": 120000,
+      "event": { "type": "turn_complete", "text": "So if p is even, I can write p equals two k for some integer k. Then substituting gives four k squared equals two q squared, so two k squared equals q squared. That means q is even too. But that's a contradiction because I assumed they had no common factors!", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.9, "checkpointsHit": ["c3"], "misconceptionId": null, "evidence": "Complete proof with correct contradiction." },
+      "expect": { "move": { "type": "probe", "probeIdx": 0 }, "interrupt": false, "assessCalled": true, "reason": "solved_probe", "state": { "probesAsked": 1, "checkpointsHit": ["c1", "c2", "c3"] }, "interviewerKind": "utterance" },
+      "live": { "status": ["correct", "progressing", "partial"] }
+    },
+    {
+      "atMs": 150000,
+      "event": { "type": "turn_complete", "text": "For the square root of four, let me think - if root four equals p over q, then p squared equals four q squared. That doesn't give us a contradiction like before, because four is a perfect square.", "source": "voice" },
+      "mock": { "status": "correct", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Correctly identifies why the proof doesn't work for √4." },
+      "expect": { "move": { "type": "advance", "toProblemIdx": 1 }, "interrupt": false, "assessCalled": true, "reason": "solved_advance", "state": { "problemIdx": 1, "hintRung": -1, "checkpointsHit": [], "probesAsked": 0 }, "interviewerKind": "utterance" }
+    }
+  ]
+}

@@ -1,0 +1,231 @@
+
+// Review 1 additions (stage-08-review.md G1): vectors V16-V30 and H5, verified against the reviewer reference.
+describe("turn controller vectors (review 1 additions)", () => {
+  beforeEach(resetFake);
+  const A = "data:image/png;base64,AAA";
+  const B = "data:image/png;base64,BBB";
+
+  it('H5: "s0" -> 0751b736 (zero-padded)', () => {
+    expect(hashString("s0")).toBe("0751b736");
+  });
+
+  it("V16: silence timer while a partial is in flight re-arms 10 s later", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(8));
+    advanceTo(20000);
+    advanceTo(25000);
+    ctrl.settled({ type: "silent" });
+    advanceTo(29999);
+    advanceTo(30000);
+    expect(sends).toEqual([
+      { t: 0, type: "partial", text: W(8) },
+      { t: 30000, type: "silence", ms: 30000 },
+    ]);
+  });
+
+  it("V17: a refused silence send re-arms 10 s later", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    sendOk = false;
+    advanceTo(20000);
+    sendOk = true;
+    advanceTo(29999);
+    advanceTo(30000);
+    expect(sends).toEqual([
+      { t: 20000, type: "silence", ms: 20000 },
+      { t: 30000, type: "silence", ms: 30000 },
+    ]);
+  });
+
+  it("V18: sending a partial clears its wait timer (only the silence timer is left)", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(8));
+    expect(sends).toEqual([{ t: 0, type: "partial", text: W(8) }]);
+    expect(timerQueue.map((tm) => tm.at)).toEqual([20000]);
+  });
+
+  it("V19: nothing else is sent while a canvas step is in flight", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.canvasChanged(() => A);
+    advanceTo(4000);
+    advanceTo(4500);
+    ctrl.partial(W(8));
+    advanceTo(5000);
+    ctrl.settled({ type: "silent" });
+    expect(sends).toEqual([
+      { t: 4000, type: "canvas", image: A },
+      { t: 5000, type: "partial", text: W(8) },
+    ]);
+  });
+
+  it("V20: a refused canvas send is retried on the next flush", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.canvasChanged(() => A);
+    sendOk = false;
+    advanceTo(4000);
+    sendOk = true;
+    advanceTo(4100);
+    ctrl.setIdle(true);
+    expect(sends).toEqual([
+      { t: 4000, type: "canvas", image: A },
+      { t: 4100, type: "canvas", image: A },
+    ]);
+  });
+
+  it("V21: a sent canvas is not re-read on later flushes", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    let reads = 0;
+    let img = A;
+    ctrl.canvasChanged(() => {
+      reads++;
+      return img;
+    });
+    advanceTo(4000);
+    advanceTo(4100);
+    ctrl.settled({ type: "silent" });
+    img = B;
+    advanceTo(4200);
+    ctrl.setIdle(true);
+    expect(sends).toEqual([{ t: 4000, type: "canvas", image: A }]);
+    expect(reads).toBe(1);
+  });
+
+  it("V22: a partial counts as activity for the silence timer", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    advanceTo(15000);
+    ctrl.partial(W(1));
+    advanceTo(18000);
+    advanceTo(18100);
+    ctrl.settled({ type: "silent" });
+    advanceTo(34999);
+    advanceTo(35000);
+    expect(sends).toEqual([
+      { t: 18000, type: "partial", text: W(1) },
+      { t: 35000, type: "silence", ms: 20000 },
+    ]);
+  });
+
+  it("V23: the 3 s wait runs from the first unsent word", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(3));
+    advanceTo(1000);
+    ctrl.partial(W(4));
+    advanceTo(2999);
+    expect(sends).toEqual([]);
+    advanceTo(3000);
+    expect(sends).toEqual([{ t: 3000, type: "partial", text: W(4) }]);
+  });
+
+  it("V24: turnBoundary resets the sent-word count", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(8));
+    advanceTo(100);
+    ctrl.settled({ type: "silent" });
+    advanceTo(200);
+    ctrl.turnBoundary();
+    ctrl.partial(W(8));
+    expect(sends).toEqual([
+      { t: 0, type: "partial", text: W(8) },
+      { t: 200, type: "partial", text: W(8) },
+    ]);
+  });
+
+  it("V25: turnBoundary counts as activity and lifts the two-prompt cap", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    advanceTo(20000);
+    advanceTo(20100);
+    ctrl.settled({ type: "hint", rung: 0 });
+    advanceTo(40100);
+    advanceTo(40200);
+    ctrl.settled({ type: "hint", rung: 1 });
+    advanceTo(60000);
+    ctrl.turnBoundary();
+    advanceTo(79999);
+    advanceTo(80000);
+    expect(sends).toEqual([
+      { t: 20000, type: "silence", ms: 20000 },
+      { t: 40100, type: "silence", ms: 20000 },
+      { t: 80000, type: "silence", ms: 20000 },
+    ]);
+  });
+
+  it("V26: a new stroke while a canvas is due restarts the 4 s idle wait", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(8));
+    ctrl.canvasChanged(() => A);
+    advanceTo(4000);
+    advanceTo(5000);
+    ctrl.canvasChanged(() => B);
+    advanceTo(6000);
+    ctrl.settled({ type: "silent" });
+    advanceTo(8999);
+    expect(sends).toEqual([{ t: 0, type: "partial", text: W(8) }]);
+    advanceTo(9000);
+    expect(sends).toEqual([
+      { t: 0, type: "partial", text: W(8) },
+      { t: 9000, type: "canvas", image: B },
+    ]);
+  });
+
+  it("V27: a canvas change counts as activity for the silence timer", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    advanceTo(15000);
+    ctrl.canvasChanged(() => null);
+    advanceTo(34999);
+    expect(sends).toEqual([]);
+    advanceTo(35000);
+    expect(sends).toEqual([{ t: 35000, type: "silence", ms: 20000 }]);
+  });
+
+  it("V28: settled() with nothing in flight is ignored", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    advanceTo(15000);
+    ctrl.settled({ type: "hint", rung: 0 });
+    advanceTo(20000);
+    expect(sends).toEqual([{ t: 20000, type: "silence", ms: 20000 }]);
+  });
+
+  it("V29: only spoken replies to silence count toward the cap", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(8));
+    advanceTo(100);
+    ctrl.settled({ type: "realign", misconceptionId: "m1" });
+    advanceTo(20100);
+    advanceTo(20200);
+    ctrl.settled({ type: "hint", rung: 0 });
+    advanceTo(40200);
+    expect(sends).toEqual([
+      { t: 0, type: "partial", text: W(8) },
+      { t: 20100, type: "silence", ms: 20000 },
+      { t: 40200, type: "silence", ms: 20000 },
+    ]);
+  });
+
+  it("V30: a silent reply keeps a live silence timer", () => {
+    const ctrl = makeController();
+    ctrl.setIdle(true);
+    ctrl.partial(W(8));
+    advanceTo(100);
+    ctrl.settled({ type: "silent" });
+    advanceTo(19999);
+    expect(sends).toEqual([{ t: 0, type: "partial", text: W(8) }]);
+    advanceTo(20000);
+    expect(sends).toEqual([
+      { t: 0, type: "partial", text: W(8) },
+      { t: 20000, type: "silence", ms: 20000 },
+    ]);
+  });
+});

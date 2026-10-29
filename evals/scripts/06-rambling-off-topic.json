@@ -1,0 +1,35 @@
+{
+  "id": "rambling-off-topic",
+  "title": "Rambling off-topic",
+  "description": "Student rambles about unrelated topics, triggering multiple interjections.",
+  "configId": "cs-oxbridge",
+  "styleId": "rigorous",
+  "steps": [
+    {
+      "atMs": 20000,
+      "event": { "type": "partial", "text": "so about that football match last weekend you know the one where we won", "words": 14 },
+      "mock": { "status": "off_track", "confidence": 0.7, "checkpointsHit": [], "misconceptionId": null, "evidence": "Student talking about football instead of the algorithm." },
+      "expect": { "move": { "type": "realign", "misconceptionId": null }, "interrupt": true, "assessCalled": true, "reason": "interject_off_track", "state": { "lastInterjectAtMs": 20000, "turnWordBaseline": 14 }, "interviewerKind": "interjection" },
+      "live": { "status": ["off_track"], "misconceptionId": null }
+    },
+    {
+      "atMs": 25000,
+      "event": { "type": "partial", "text": "so about that football match last weekend you know the one where we won because they parked the bus for ninety minutes and then we scored right at the end", "words": 30 },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": false, "state": { "lastInterjectAtMs": 20000, "turnWordBaseline": 14 } }
+    },
+    {
+      "atMs": 33000,
+      "event": { "type": "partial", "text": "so about that football match last weekend you know the one where we won because they parked the bus for ninety minutes and then we scored right at the end and the whole crowd went completely wild after the whistle", "words": 40 },
+      "mock": { "status": "off_track", "confidence": 0.8, "checkpointsHit": [], "misconceptionId": null, "evidence": "Still rambling about football." },
+      "expect": { "move": { "type": "realign", "misconceptionId": null }, "interrupt": true, "assessCalled": true, "reason": "interject_off_track", "state": { "lastInterjectAtMs": 33000, "turnWordBaseline": 40 }, "interviewerKind": "interjection" },
+      "live": { "status": ["off_track"] }
+    },
+    {
+      "atMs": 45000,
+      "event": { "type": "turn_complete", "text": "OK so for the problem: I'll check every pair in the array using two nested loops. That's O(n squared).", "source": "voice" },
+      "mock": { "status": "progressing", "confidence": 0.7, "checkpointsHit": ["c1"], "misconceptionId": null, "evidence": "Back on track with brute force approach." },
+      "expect": { "move": { "type": "acknowledge" }, "interrupt": false, "assessCalled": true, "reason": "progress", "state": { "turnWordBaseline": 0, "checkpointsHit": ["c1"] }, "interviewerKind": "utterance" },
+      "live": { "status": ["progressing", "partial", "correct"] }
+    }
+  ]
+}

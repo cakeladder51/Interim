@@ -1,0 +1,29 @@
+{
+  "id": "low-confidence-off-track",
+  "title": "Low confidence off-track",
+  "description": "Partial assessments with low confidence don't trigger interjection, but turn_complete does trigger realign.",
+  "configId": "cs-oxbridge",
+  "styleId": "supportive",
+  "steps": [
+    {
+      "atMs": 20000,
+      "event": { "type": "partial", "text": "I think I would just check every pair of numbers including a number with itself", "words": 15 },
+      "mock": { "status": "off_track", "confidence": 0.7, "checkpointsHit": [], "misconceptionId": "same-element-twice", "evidence": "Student considers pairing an element with itself." },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": true, "state": { "lastInterjectAtMs": null, "turnWordBaseline": 0 } },
+      "live": { "status": ["off_track", "progressing", "partial"] }
+    },
+    {
+      "atMs": 35000,
+      "event": { "type": "partial", "text": "I think I would just check every pair of numbers including a number with itself because the same value could be used twice if it is exactly half the target", "words": 30 },
+      "mock": { "status": "off_track", "confidence": 0.75, "checkpointsHit": [], "misconceptionId": "same-element-twice", "evidence": "Still planning to pair an element with itself." },
+      "expect": { "move": { "type": "silent" }, "interrupt": false, "assessCalled": true, "state": { "lastInterjectAtMs": null } }
+    },
+    {
+      "atMs": 45000,
+      "event": { "type": "turn_complete", "text": "So my approach is: for each element a[i], check if a[i] plus a[i] equals the target T. If yes, return true.", "source": "voice" },
+      "mock": { "status": "off_track", "confidence": 0.6, "checkpointsHit": [], "misconceptionId": "same-element-twice", "evidence": "Explicitly pairs an element with itself." },
+      "expect": { "move": { "type": "realign", "misconceptionId": "same-element-twice" }, "interrupt": false, "assessCalled": true, "reason": "off_track", "interviewerKind": "utterance" },
+      "live": { "status": ["off_track"], "misconceptionId": "same-element-twice" }
+    }
+  ]
+}
